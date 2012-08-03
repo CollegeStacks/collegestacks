@@ -1,0 +1,35 @@
+import unittest
+from django.test import Client
+
+class TestFoundersSuite(unittest.TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_has_about_url(self):
+        url = '/about'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,200)
+
+    def test_has_beam_name_on_page(self):
+        url = '/about'
+        response = self.client.get(url)
+        print(response.content)
+        self.assertIn('Atthaphong Limsupanark',response.content)
+
+    def test_has_boat_name_on_page(self):
+        url = '/about'
+        response = self.client.get(url)
+        print(response.content)
+        self.assertIn('Thitikom Yansombat', response.content)
+
+    def test_has_noly_name_on_page(self):
+        url = '/about'
+        response = self.client.get(url)
+        print(response.content)
+        self.assertIn("Khemin Kongchumnian", response.content)
+
+    def test_has_fair_name_on_page(self):
+        url = '/about'
+        response = self.client.get(url)
+        print(response.content)
+        self.assertIn("Wattanai Lattikul", response.content)
