@@ -1,6 +1,6 @@
 import unittest
 from django.test import Client
-from django.db import models
+from app.models import Course,University, Faculty
 
 class TestFoundersSuite(unittest.TestCase):
     def setUp(self):
@@ -24,10 +24,18 @@ class TestCourseSuite(unittest.TestCase):
     def setUp(self):
         self.client = Client()
 
+
     def test_course_url(self):
         url = '/course/new'
         response = self.client.get(url)
         self.assertEqual(response.status_code,200)
+
+    def test_course_model(self):
+        self.uni1 = University.objects.create(name="Chulalongkorn")
+        self.faculty1 = Faculty.objects.create(name="Engineering")
+        self.course1 = Course.objects.create(title="Formal Language", abbr="Formal Lang", code="2110399",
+        description="abc",university=self.uni1,faculty=self.faculty1)
+        self.assertEquals(self.uni1.name,'Chulalongkorn')
 
 
 
