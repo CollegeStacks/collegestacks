@@ -98,6 +98,13 @@ class TestCourseSuite(unittest.TestCase):
         self.assertIn(c.university.name, rc)
         self.assertIn(c.faculty.name, rc)
 
+    def test_course_id_notfound(self):
+        id = len(Course.objects.all())+5
+        url = '/course/%(id)d'% {'id':id}
+        response = self.client.get(url)
+        print(url)
+        self.assertEqual(response.status_code,404)
+
 
 
 

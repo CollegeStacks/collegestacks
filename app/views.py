@@ -1,7 +1,7 @@
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response,get_object_or_404
 from django.template import RequestContext
 from app.forms import CreateCourseForm
 from app.models import Course,University, Faculty
@@ -37,7 +37,7 @@ def createCourse(request):
         return render_to_response('newCourse.html', context)
 
 def viewCourse(request,course_id):
-    c = Course.objects.get(pk=course_id)
+    c = get_object_or_404(Course, pk=course_id)
     return render_to_response('course.html',{"c":c})
 
 
