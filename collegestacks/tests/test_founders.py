@@ -24,7 +24,6 @@ class TestCourseSuite(unittest.TestCase):
     def setUp(self):
         self.client = Client()
 
-
     def test_course_url(self):
         url = '/course/new'
         response = self.client.get(url)
@@ -75,5 +74,30 @@ class TestCourseSuite(unittest.TestCase):
         print(response)
         self.assertEqual(response.status_code,200)
         self.assertIn('please',response.content)
+
+
+    def test_course_id(self):
+        #test case for CS-04 View Course story card --noly
+
+        #add new course to db
+        u = University.objects.create(name="Chulalongkorn")
+        f = Faculty.objects.create(name="Engineering")
+        c = Course.objects.create(title="Formal Language", code="2110399", abbr="FORM LANG",university=u, faculty=f)
+        c.save()
+
+        #retrieve course from http call to test
+        url = '/course/%(id)d'%{"id":c.id}
+        response = self.client.get(url)
+        rc = response.content
+        print(rc)
+
+        self.assertEqual(response.status_code,200)
+        self.assertIn(c.title, rc)
+        self.assertIn(c.code, rc)
+        self.assertIn(c.abbr, rc)
+        self.assertIn(c.university.name, rc)
+        self.assertIn(c.faculty.name, rc)
+
+
 
 

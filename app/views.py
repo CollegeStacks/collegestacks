@@ -36,6 +36,10 @@ def createCourse(request):
     else:
         return render_to_response('newCourse.html', context)
 
+def viewCourse(request,course_id):
+    c = Course.objects.get(pk=course_id)
+    return render_to_response('course.html',{"c":c})
+
 
 
 
