@@ -35,17 +35,45 @@ class TestCourseSuite(unittest.TestCase):
         response = self.client.get(url)
         print(response.content)
         self.assertIn("form",response.content)
-        self.fail("Not Implement Yet")
+        #self.fail("Not Implement Yet")
 
     def test_course_model(self):
         self.uni1 = University.objects.create(name="Chulalongkorn")
         self.faculty1 = Faculty.objects.create(name="Engineering")
         self.course1 = Course.objects.create(title="Formal Language", abbr="Formal Lang", code="2110399",
             description="abc",university=self.uni1,faculty=self.faculty1)
-        self.assertEquals(self.uni1.name,'Chulalongkorn')
+        self.assertEquals(self.uni1.name,'Chulalongkorn') #****************************************************
 
+    def test_create_course_success(self):
+        context = {
+            'title' : 'noly',
+            'code' : '2110455',
+            'abbr' : 'form',
+            'university' : '1',
+            'faculty' : '1',
+            'description' : 'test'
+        }
+        url = '/course/new'
+        response = self.client.post(url,context)
+        print(response)
+        self.assertEqual(response.status_code,302)
+        course1 = Course.objects.get(title='noly')
+        print(Course.objects.all())
+        self.assertIn('course/%d'%course1.id,response.__str__())
 
-
-
+    def test_create_course_fail(self):
+        context = {
+            'title' : 'noly',
+            'code' : '2110455',
+            'abbr' : 'form',
+            'university' : '',
+            'faculty' : '',
+            'description' : ''
+        }
+        url = '/course/new'
+        response = self.client.post(url,context)
+        print(response)
+        self.assertEqual(response.status_code,200)
+        self.assertIn('please',response.content)
 
 

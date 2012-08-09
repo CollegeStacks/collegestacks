@@ -5,8 +5,11 @@
     <title></title>
 </head>
 <body>
-<form action="">
+{% if error %}{{ error }}{% endif %}
+<form action="/course/new" method="post">
+    {% csrf_token %}
     {{ form.as_p }}
+    <input type="submit" value="submit" />
 </form>
 </body>
 </html>
