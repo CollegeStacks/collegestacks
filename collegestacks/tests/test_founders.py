@@ -113,6 +113,24 @@ class TestCourseSuite(unittest.TestCase):
         print(url)
         self.assertEqual(response.status_code,404)
 
+    def test_zadd_link(self):
+        print(Course.objects.count())
+        c = Course.objects.filter(title="Formal Language_edit")[0]
+        url = '/course/%d/upLink'%c.id
+        context = {
+            'name' : 'test link name',
+            'description' : 'desc test link name na ja',
+            'type' : 'link',
+            'sourceLink' : 'www.wikipedia.com',
+            'docfile' : None,
+            }
+        response = self.client.post(url,context,follow=True)
+        print(response.content)
+        self.assertEqual(response.status_code,200)
+        self.assertIn('test link name',response.content)
+        self.assertIn('www.wikipedia.com',response.content)
+#        self.assertIn('desc test link name na ja',response.content)
+
     def test_edit_course(self):
         #CS-02: Edit Course
         #test edit url exists
@@ -153,6 +171,8 @@ class TestCourseSuite(unittest.TestCase):
         self.assertIn('%s_edit'%c.description, response.content)
         self.assertIn(u_e.name, response.content)
         self.assertIn(f_e.name, response.content)
+#        self.assertFalse()
+
 
 
 
