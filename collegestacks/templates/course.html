@@ -4,9 +4,36 @@
     <title>View Course</title>
 </head>
 <body>
-<h1>{{ c.code }} : {{ c.title }}</h1>
-<h3><i>{{ c.abbr }}</i></h3>
-<h3>{{ c.faculty.name }}, {{ c.university.name }}</h3>
-<p>Description: {{ c.description }}</p>
+    <h1>{{ c.code }} : {{ c.title }}</h1>
+    <h3><i>{{ c.abbr }}</i></h3>
+    <h3>{{ c.faculty.name }}, {{ c.university.name }}</h3>
+    <p>Description: {{ c.description }}</p>
+
+    {% if resources %}
+        <ul>
+            {% for resource in resources %}
+                <li><a href="{{ resource.docfile.url }}">{{ resource.docfile.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No documents.</p>
+    {% endif %}
+
+    <form action="/course/{{ c.id }}/uploadFile" method="post" >
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Post Link" />
+    </form>
+
+    <form action="/course/{{ c.id }}/upLink" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_filed_errors }}</p>
+        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+        <p>
+        {{ form.docfile.errors }}
+        {{ form.docfile }}
+        </p>
+        <p> <input type="submit" value="upload" /> </p>
+    </form>
 </body>
 </html>

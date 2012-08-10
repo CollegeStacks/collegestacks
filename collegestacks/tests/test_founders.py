@@ -115,3 +115,5 @@ class TestCourseSuite(unittest.TestCase):
 #    def test_edit_course(self):
 #        url = '/course/'
 
+
+

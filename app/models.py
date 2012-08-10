@@ -24,3 +24,14 @@ class Course(models.Model):
 
     def __unicode__(self):
         return self.title
+
+class Resource(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(max_length=400)
+    type = models.CharField(max_length=10)
+    docfile = models.FileField(upload_to='resources/')
+    sourceLink = models.CharField(max_length=500)
+    course = models.ForeignKey(Course)
+
+
+
