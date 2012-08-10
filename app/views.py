@@ -42,7 +42,7 @@ def viewCourse(request,course_id):
     context = RequestContext(request,
         {
             'c' : c,
-            'resource' : resource,
+            'resources' : resource,
             'upFileForm' : UploadFileForm(),
             'upLinkForm' : UploadSourceLinkForm(),
         }

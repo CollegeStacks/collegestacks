@@ -12,7 +12,7 @@
     {% if resources %}
         <ul>
             {% for resource in resources %}
-                <li><a href="{{ resource.docfile.url }}">{{ resource.docfile.name }}</a></li>
+                <li><a href="http://{{ resource.sourceLink }}">Link: {{ resource.name }}</a></li>
             {% endfor %}
         </ul>
     {% else %}
