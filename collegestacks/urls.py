@@ -20,6 +20,6 @@ urlpatterns = patterns('',
     url(r'^course/(?P<course_id>\d+)/edit$','app.views.editCourse'),
 
     url(r'^course/(?P<course_id>\d+)/uploadFile$','app.views.uploadFile'),
-    url(r'^course/(?P<course_id>\d+)/upLink$','app.views.uploadFile'),
+    url(r'^course/(?P<course_id>\d+)/upLink$','app.views.upLink'),
 
 )

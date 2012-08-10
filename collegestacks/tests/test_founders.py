@@ -84,7 +84,7 @@ class TestCourseSuite(unittest.TestCase):
 
 
     def test_course_id(self):
-        #test case for CS-04 View Course story card --noly
+        #CS-04 View Course
 
         #add new course to db
         u = University.objects.get_or_create(name="Chulalongkorn")[0]
@@ -106,6 +106,7 @@ class TestCourseSuite(unittest.TestCase):
         self.assertIn(c.faculty.name, rc)
 
     def test_course_id_notfound(self):
+        #CS-04 View Course
         id = len(Course.objects.all())+5
         url = '/course/%(id)d'% {'id':id}
         response = self.client.get(url)
@@ -113,6 +114,7 @@ class TestCourseSuite(unittest.TestCase):
         self.assertEqual(response.status_code,404)
 
     def test_edit_course(self):
+        #CS-02: Edit Course
         #test edit url exists
         c = Course.objects.filter(title="Formal Language")[0]
         url = '/course/%d/edit'%c.id

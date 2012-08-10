@@ -10,6 +10,11 @@ class CreateCourseForm(forms.Form):
     faculty = forms.ModelChoiceField(Faculty.objects.all())
     description = forms.CharField(widget=forms.Textarea)
 
+class UploadSourceLinkForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    description = forms.CharField(widget=forms.Textarea)
+    sourceLink = forms.CharField(max_length=500)
+
 class UploadFileForm(forms.Form):
     name = forms.CharField(max_length=100)
     description = forms.CharField(widget=forms.Textarea)
@@ -18,7 +23,3 @@ class UploadFileForm(forms.Form):
         help_text='max size 10 mb.',
     )
 
-class UploadSourceLinkForm(forms.Form):
-    name = forms.CharField(max_length=100)
-    description = forms.CharField(widget=forms.Textarea)
-    sourceLink = forms.CharField(max_length=500)

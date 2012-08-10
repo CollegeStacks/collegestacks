@@ -19,21 +19,23 @@
         <p>No documents.</p>
     {% endif %}
 
-    <form action="/course/{{ c.id }}/uploadFile" method="post" >
+    <form action="/course/{{ c.id }}/upLink" method="post" >
         {% csrf_token %}
-        {{ form }}
+        {{ upLinkForm.as_p }}
         <input type="submit" value="Post Link" />
     </form>
 
-    <form action="/course/{{ c.id }}/upLink" method="post" enctype="multipart/form-data">
+    <form action="/course/{{ c.id }}/uploadFile" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <p>{{ form.non_filed_errors }}</p>
-        <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+        <p>{{ upFileForm.non_filed_errors }}</p>
+        <p>{{ upFileForm.name.label_tag }}: {{ upFileForm.name }}</p>
+        <p>{{ upFileForm.description.label_tag }}: {{ upFileForm.description }}</p>
+        <p>{{ upFileForm.docfile.label_tag }} {{ upFileForm.docfile.help_text }}</p>
         <p>
-        {{ form.docfile.errors }}
-        {{ form.docfile }}
+        {{ upFileForm.docfile.errors }}
+        {{ upFileForm.docfile }}
         </p>
-        <p> <input type="submit" value="upload" /> </p>
+        <p> <input type="submit" value="Upload File" /> </p>
     </form>
 </body>
 </html>

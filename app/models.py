@@ -33,5 +33,8 @@ class Resource(models.Model):
     sourceLink = models.CharField(max_length=500)
     course = models.ForeignKey(Course)
 
+    def __unicode__(self):
+        return self.name
+
 
 
