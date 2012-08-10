@@ -37,10 +37,10 @@ class TestCourseSuite(unittest.TestCase):
         #self.fail("Not Implement Yet")
 
     def test_course_model(self):
-        uni1 = University.objects.create(name="Chulalongkorn")
-        faculty1 = Faculty.objects.create(name="Engineering")
-        course1 = Course.objects.create(title="Formal Language", abbr="Formal Lang", code="2110399",
-            description="abc",university=uni1,faculty=faculty1)
+        uni1 = University.objects.get_or_create(name="Chulalongkorn")[0]
+        faculty1 = Faculty.objects.get_or_create(name="Engineering")[0]
+        course1 = Course.objects.get_or_create(title="Formal Language", abbr="Formal Lang", code="2110399",
+            description="abc",university=uni1,faculty=faculty1)[0]
         course1.save()
         c = Course.objects.get(pk=course1.id)
         self.assertEquals(c.title,'Formal Language')
@@ -87,9 +87,9 @@ class TestCourseSuite(unittest.TestCase):
         #test case for CS-04 View Course story card --noly
 
         #add new course to db
-        u = University.objects.create(name="Chulalongkorn")
-        f = Faculty.objects.create(name="Engineering")
-        c = Course.objects.create(title="Formal Language", code="2110399", abbr="FORM LANG",university=u, faculty=f)
+        u = University.objects.get_or_create(name="Chulalongkorn")[0]
+        f = Faculty.objects.get_or_create(name="Engineering")[0]
+        c = Course.objects.get_or_create(title="Software Engineering", code="2110333", abbr="SE",university=u, faculty=f)[0]
         c.save()
 
         #retrieve course from http call to test
@@ -112,6 +112,46 @@ class TestCourseSuite(unittest.TestCase):
         print(url)
         self.assertEqual(response.status_code,404)
 
-#    def test_edit_course(self):
-#        url = '/course/'
+    def test_edit_course(self):
+        #test edit url exists
+        c = Course.objects.filter(title="Formal Language")[0]
+        url = '/course/%d/edit'%c.id
+        response = self.client.get(url)
+        print (url)
+        print (response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(c.title, response.content)
+        self.assertIn(c.abbr, response.content)
+        self.assertIn(c.code, response.content)
+        self.assertIn(c.description, response.content)
+        self.assertIn('selected="selected">%s'%c.university.name, response.content)
+        self.assertIn('selected="selected">%s'%c.faculty.name, response.content)
+
+        #test post edited info
+        u_e = University.objects.get_or_create(name='%s_edit'%c.university.name)[0]
+        f_e = Faculty.objects.get_or_create(name='%s_edit'%c.faculty.name)[0]
+        u_e.save()
+        f_e.save()
+
+        context = {
+            'title' : '%s_edit'%c.title,
+            'code' : '%s_edit'%c.code,
+            'abbr' : '%s_edit'%c.abbr,
+            'university' : u_e.id,
+            'faculty' : f_e.id,
+            'description' : '%s_edit'%c.description ,
+        }
+        url = '/course/%d/edit'%c.id
+        response = self.client.post(url,context,follow=True)
+        print(response)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('%s_edit'%c.title, response.content)
+        self.assertIn('%s_edit'%c.code, response.content)
+        self.assertIn('%s_edit'%c.abbr, response.content)
+        self.assertIn('%s_edit'%c.description, response.content)
+        self.assertIn(u_e.name, response.content)
+        self.assertIn(f_e.name, response.content)
+
+
+
 

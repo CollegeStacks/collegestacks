@@ -17,6 +17,7 @@ urlpatterns = patterns('',
     url(r'^about$',TemplateView.as_view(template_name='about.html')),
     url(r'^course/new$','app.views.createCourse'),
     url(r'^course/(?P<course_id>\d+)$','app.views.viewCourse'),
+    url(r'^course/(?P<course_id>\d+)/edit$','app.views.editCourse'),
 
 
 
