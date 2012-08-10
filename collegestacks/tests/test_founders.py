@@ -37,11 +37,18 @@ class TestCourseSuite(unittest.TestCase):
         #self.fail("Not Implement Yet")
 
     def test_course_model(self):
-        self.uni1 = University.objects.create(name="Chulalongkorn")
-        self.faculty1 = Faculty.objects.create(name="Engineering")
-        self.course1 = Course.objects.create(title="Formal Language", abbr="Formal Lang", code="2110399",
-            description="abc",university=self.uni1,faculty=self.faculty1)
-        self.assertEquals(self.uni1.name,'Chulalongkorn') #****************************************************
+        uni1 = University.objects.create(name="Chulalongkorn")
+        faculty1 = Faculty.objects.create(name="Engineering")
+        course1 = Course.objects.create(title="Formal Language", abbr="Formal Lang", code="2110399",
+            description="abc",university=uni1,faculty=faculty1)
+        course1.save()
+        c = Course.objects.get(pk=course1.id)
+        self.assertEquals(c.title,'Formal Language')
+        self.assertEqual(c.abbr, 'Formal Lang')
+        self.assertEqual(c.code, '2110399')
+        self.assertEqual(c.description,'abc')
+        self.assertEqual(c.university.name,"Chulalongkorn")
+        self.assertEqual(c.faculty.name,'Engineering')
 
     def test_create_course_success(self):
         context = {
@@ -105,6 +112,6 @@ class TestCourseSuite(unittest.TestCase):
         print(url)
         self.assertEqual(response.status_code,404)
 
-
-
+#    def test_edit_course(self):
+#        url = '/course/'
 
