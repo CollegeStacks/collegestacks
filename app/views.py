@@ -42,6 +42,11 @@ def viewCourse(request,course_id):
 
 def editCourse(request,course_id):
     c = get_object_or_404(Course, pk=course_id)
+    context = RequestContext(request,
+            {
+            'form' : CreateCourseForm(),
+            }
+    )
     print("INITIAL ID IS %d"%c.id)
     if request.method == 'GET':
         context = RequestContext(request,
