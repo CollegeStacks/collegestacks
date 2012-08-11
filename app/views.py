@@ -38,7 +38,7 @@ def createCourse(request):
 
 def viewCourse(request,course_id):
     c = get_object_or_404(Course, pk=course_id)
-    resource = Resource.objects.all()
+    resource = Resource.objects.filter(course__id = c.id)
     context = RequestContext(request,
         {
             'c' : c,
@@ -154,7 +154,6 @@ def upLink(request, course_id):
             )
 
             return render_to_response('course.html',context)
-        # handle in case submit incomplete form********************************************
     else:
         return viewCourse(request,course_id)
 

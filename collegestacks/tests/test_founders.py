@@ -171,9 +171,18 @@ class TestCourseSuite(unittest.TestCase):
         self.assertIn('%s_edit'%c.description, response.content)
         self.assertIn(u_e.name, response.content)
         self.assertIn(f_e.name, response.content)
-#        self.assertFalse()
 
-
-
-
-
+    def test_upload_file(self):
+        uploadFile = open('D:\PycharmProjects\collegestacks\collegestacks\\tests\\test_files\\testUpload.txt')
+        context = (
+            {
+                'name':'test',
+                'description':'test upload file',
+                'docfile':uploadFile,
+            }
+        )
+        response = self.client.post('/course/1/uploadFile', context)
+        uploadFile.close()
+        print(Course.objects.all())
+        print(response.status_code)
+        self.fail()
