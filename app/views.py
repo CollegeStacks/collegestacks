@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response,get_object_or_404
 from django.template import RequestContext
-from app.forms import CreateCourseForm
+from app.forms import CreateCourseForm,EditCourseForm
 from app.models import Course,University, Faculty
 
 def createCourse(request):
@@ -44,10 +44,10 @@ def editCourse(request,course_id):
     c = get_object_or_404(Course, pk=course_id)
     context = RequestContext(request,
             {
-            'form' : CreateCourseForm(),
+            'form' : EditCourseForm(),
             }
     )
-    print("INITIAL ID IS %d"%c.id)
+    #print("INITIAL ID IS %d"%c.id)
     if request.method == 'GET':
         context = RequestContext(request,
                 {
@@ -61,11 +61,11 @@ def editCourse(request,course_id):
         )
         return render_to_response('editCourse.html', context)
     else :
-        print("POSTING")
-        creCourseForm = CreateCourseForm(request.POST)
-        data = creCourseForm.data
-        if creCourseForm.is_valid():
-            data = creCourseForm.cleaned_data
+        #print("POSTING")
+        form = EditCourseForm(request.POST)
+        data = form.data
+        if form.is_valid():
+            data = form.cleaned_data
             c.title=data['title']
             c.code=data['code']
             c.abbr=data['abbr']
@@ -73,13 +73,13 @@ def editCourse(request,course_id):
             c.university=data['university']
             c.faculty=data['faculty']
             c.save()
-            print("REDIRECTING TO %d"%c.id)
+            #print("REDIRECTING TO %d"%c.id)
             return HttpResponseRedirect('/course/%d'%c.id)
         else:
             context.update(
                     {
-                    'form' : CreateCourseForm(
-                        initial = {'title':data['title'], 'code':data['code'], 'abbr':data['abbr'],
+                    'form' : EditCourseForm(
+                        initial_data = {'title':data['title'], 'code':data['code'], 'abbr':data['abbr'],
                                    'university':data['university'], 'faculty':data['faculty'],
                                    'description':data['description']}
                     ),
