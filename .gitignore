@@ -6,3 +6,5 @@ local_settings.py
 
 # PyCharm Setting
 .idea/
+
+.DS_Store
