@@ -1,6 +1,7 @@
 import unittest
 from django.test import Client
 from app.models import Course,University, Faculty
+import os.path
 
 class TestFoundersSuite(unittest.TestCase):
     def setUp(self):
@@ -173,7 +174,8 @@ class TestCourseSuite(unittest.TestCase):
         self.assertIn(f_e.name, response.content)
 
     def test_upload_file(self):
-        uploadFile = open('D:\PycharmProjects\collegestacks\collegestacks\\tests\\test_files\\testUpload.txt')
+        PROJECT_DIR = os.path.dirname(__file__)
+        uploadFile = open(PROJECT_DIR+'\\test_files\\testUpload.txt')
         context = (
             {
                 'name':'test',
@@ -183,10 +185,11 @@ class TestCourseSuite(unittest.TestCase):
         )
         response = self.client.post('/course/1/uploadFile', context, follow=True)
         uploadFile.close()
-        print(response.status_code)
+        #print(response.status_code)
         self.assertEqual(response.status_code,200)
-        print(response.content)
+        #print(response.content)
         self.assertIn('test', response.content)
+        #self.fail()
 
     def test_upload_file_fail(self):
         context = (
