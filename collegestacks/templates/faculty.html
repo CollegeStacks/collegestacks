@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Faculty</title>
+</head>
+<body>
+<h1>{{ faculty.name }}</h1>
+<h3>Courses:</h3>
+{% if courses %}
+<ul>
+    {% for course in courses %}
+    <li><a href="/course/{{ course.id }}">{{ course.title }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+    <h2>No course in this Faculty yet.</h2>
+{% endif %}
+</body>
+</html>

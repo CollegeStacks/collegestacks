@@ -162,6 +162,31 @@ def upLink(request, course_id):
     else:
         return viewCourse(request,course_id)
 
+def viewUniversities(request):
+    universities = University.objects.all()
+    context = {'universities' : universities}
+    return render_to_response('universities.html',context)
+
+def viewUniversity(request,university_id):
+    university = get_object_or_404(University,id=university_id)
+    courses = Course.objects.filter(university__id=university_id).order_by('faculty__name')
+    context = {
+        'courses' : courses,
+        'university' : university
+    }
+    return render_to_response('university.html',context)
 
 
+def viewFaculties(request):
+    faculties = Faculty.objects.all()
+    context = {'faculties' : faculties}
+    return render_to_response('faculties.html',context)
 
+def viewFaculty(request,faculty_id):
+    faculty = get_object_or_404(Faculty,id=faculty_id)
+    courses = Course.objects.filter(faculty__id=faculty_id).order_by('university__name')
+    context = {
+        'courses' : courses,
+        'faculty' : faculty
+    }
+    return render_to_response('faculty.html',context)

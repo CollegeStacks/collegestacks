@@ -141,5 +141,85 @@ class TestCourseSuite(TestCase):
         self.assertNotIn(faculty.name,response.content)
 
 
+    def test_list_universities(self):
+        #no universities
+        url = '/universities'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,200)
+        self.assertIn('NO UNIVERSITY FOUND',response.content)
+
+        u1 = University.objects.create(name="Chula")
+        u2 = University.objects.create(name="MIT")
+        u3 = University.objects.create(name="Harvard")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,200)
+        self.assertNotIn('NO UNIVERSITY FOUND',response.content)
+        self.assertIn(u1.name,response.content)
+        self.assertIn('/university/' + str(u1.id) ,response.content)
+        self.assertIn(u2.name,response.content)
+        self.assertIn('/university/' + str(u2.id) ,response.content)
+        self.assertIn(u3.name,response.content)
+        self.assertIn('/university/' + str(u3.id) ,response.content)
+
+    def test_list_faculties(self):
+        #no universities
+        url = '/faculties'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,200)
+        self.assertIn('NO FACULTY FOUND',response.content)
+
+        f1 = Faculty.objects.create(name="Engineering")
+        f2 = Faculty.objects.create(name="Law")
+        f3 = Faculty.objects.create(name="Arts")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code,200)
+        self.assertNotIn('NO FACULTY FOUND',response.content)
+        self.assertIn(f1.name,response.content)
+        self.assertIn('/faculty/' + str(f1.id) ,response.content)
+        self.assertIn(f2.name,response.content)
+        self.assertIn('/faculty/' + str(f2.id) ,response.content)
+        self.assertIn(f3.name,response.content)
+        self.assertIn('/faculty/' + str(f3.id) ,response.content)
+
+    def test_view_faculty(self):
+        faculty = Faculty.objects.create(name = 'Engineering')
+        university1 = University.objects.create(name = 'Chula')
+        university2 = University.objects.create(name = 'MIT')
+        course1 = Course.objects.create(title='Formal Language', abbr='FORM LANG', code='2110211', description="yay",
+                                                                        faculty=faculty, university=university1)
+        course2 = Course.objects.create(title='Calculus', abbr='CAL', code='EE999', description="fuck",
+            faculty=faculty, university=university2)
+        course3 = Course.objects.create(title='Programming', abbr='PROG', code='2110101', description="yay",
+            faculty=faculty, university=university1)
+        url = '/faculty/1'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(course1.title, response.content)
+        self.assertIn(course2.title, response.content)
+        self.assertIn(course3.title, response.content)
+
+    def test_view_university(self):
+        university = University.objects.create(name='Chulalongkorn')
+        faculty1 = Faculty.objects.create(name='Engineering')
+        faculty2 = Faculty.objects.create(name='Law')
+
+        course1 = Course.objects.create(title='Formal Language', abbr='FORM LANG', code='2110211', description="yay",
+            faculty=faculty1, university=university)
+        course2 = Course.objects.create(title='Calculus', abbr='CAL', code='EE999', description="fuck",
+            faculty=faculty2, university=university)
+        course3 = Course.objects.create(title='Programming', abbr='PROG', code='2110101', description="yay",
+            faculty=faculty1, university=university)
+
+        url = '/university/1'
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(course1.title, response.content)
+        self.assertIn(course2.title, response.content)
+        self.assertIn(course3.title, response.content)
+
 
 

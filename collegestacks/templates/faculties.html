@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Faculties Listing</title>
+</head>
+<body>
+<h1>Faculty Listing</h1>
+{% if faculties %}
+    <ul>
+    {% for f in faculties %}
+        <li><a href="/faculty/{{ f.id }}" >{{ f.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <h2>NO FACULTY FOUND</h2>
+{% endif %}
+
+</body>
+</html>
