@@ -19,12 +19,14 @@
         <p>No documents.</p>
     {% endif %}
 
+    {% if errorLink %}{{ errorLink }}{% endif %}
     <form action="/course/{{ c.id }}/upLink" method="post" >
         {% csrf_token %}
         {{ upLinkForm.as_p }}
         <input type="submit" value="Post Link" />
     </form>
 
+    {% if errorFile %}{{ errorFile }}{% endif %}
     <form action="/course/{{ c.id }}/uploadFile" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>{{ upFileForm.non_filed_errors }}</p>

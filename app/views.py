@@ -120,6 +120,7 @@ def uploadFile(request, course_id):
                         initial={'name':data['name'], 'description':data['description']}
                     ),
                     'upLinkForm' : UploadSourceLinkForm(),
+                    'errorFile' : 'Please fill all information'
                 }
             )
 
@@ -150,6 +151,7 @@ def upLink(request, course_id):
                         initial={'name':data['name'], 'description':data['description']}
                     ),
                     'upLinkForm' : UploadSourceLinkForm(),
+                    'errorLink' : 'Please fill all information'
                     }
             )
 

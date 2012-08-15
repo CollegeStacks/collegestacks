@@ -181,8 +181,24 @@ class TestCourseSuite(unittest.TestCase):
                 'docfile':uploadFile,
             }
         )
-        response = self.client.post('/course/1/uploadFile', context)
+        response = self.client.post('/course/1/uploadFile', context, follow=True)
         uploadFile.close()
-        print(Course.objects.all())
         print(response.status_code)
-        self.fail()
+        self.assertEqual(response.status_code,200)
+        print(response.content)
+        self.assertIn('test', response.content)
+
+    def test_upload_file_fail(self):
+        context = (
+                {
+                'name':'test2',
+                'description':'test upload file',
+                'docfile':''
+                }
+            )
+        response = self.client.post('/course/1/uploadFile', context, follow=True)
+        self.assertEqual(response.status_code,200)
+        self.assertIn('Please fill all information', response.content)
+        self.assertIn('course/1',response.__str__())
+
+
