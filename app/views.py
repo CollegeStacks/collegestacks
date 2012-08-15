@@ -59,6 +59,7 @@ def editCourse(request,course_id):
     )
     print("INITIAL ID IS %d"%c.id)
     if request.method == 'GET':
+        print("GETTING")
         context = RequestContext(request,
                 {
                 'form' : CreateCourseForm(
@@ -74,6 +75,7 @@ def editCourse(request,course_id):
         print("POSTING")
         creCourseForm = CreateCourseForm(request.POST)
         data = creCourseForm.data
+        print("##############DATA\n" + str(data))
         if creCourseForm.is_valid():
             data = creCourseForm.cleaned_data
             c.title=data['title']
@@ -83,9 +85,10 @@ def editCourse(request,course_id):
             c.university=data['university']
             c.faculty=data['faculty']
             c.save()
-            print("REDIRECTING TO %d"%c.id)
+            print("EDIT COMPLETE!! REDIRECTING TO %d"%c.id)
             return HttpResponseRedirect('/course/%d'%c.id)
         else:
+            print(creCourseForm.data)
             context.update(
                     {
                     'form' : CreateCourseForm(

@@ -141,6 +141,7 @@ class TestCourseSuite(unittest.TestCase):
         print (url)
         print (response.content)
         self.assertEqual(response.status_code, 200)
+
         self.assertIn(c.title, response.content)
         self.assertIn(c.abbr, response.content)
         self.assertIn(c.code, response.content)
@@ -166,6 +167,7 @@ class TestCourseSuite(unittest.TestCase):
         response = self.client.post(url,context,follow=True)
         print(response)
         self.assertEqual(response.status_code, 200)
+        self.assertIn("<title>View Course</title>",response.content)
         self.assertIn('%s_edit'%c.title, response.content)
         self.assertIn('%s_edit'%c.code, response.content)
         self.assertIn('%s_edit'%c.abbr, response.content)
