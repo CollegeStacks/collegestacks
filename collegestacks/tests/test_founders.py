@@ -175,7 +175,8 @@ class TestCourseSuite(unittest.TestCase):
 
     def test_upload_file(self):
         PROJECT_DIR = os.path.dirname(__file__)
-        uploadFile = open(PROJECT_DIR+'\\test_files\\testUpload.txt')
+
+        uploadFile = open(PROJECT_DIR+os.sep+'test_files'+os.sep+'testUpload.txt')
         context = (
             {
                 'name':'test',
@@ -185,6 +186,7 @@ class TestCourseSuite(unittest.TestCase):
         )
         response = self.client.post('/course/1/uploadFile', context, follow=True)
         uploadFile.close()
+        print(PROJECT_DIR)
         #print(response.status_code)
         self.assertEqual(response.status_code,200)
         #print(response.content)
