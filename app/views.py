@@ -1,6 +1,5 @@
-
+from wsgiref.util import FileWrapper
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response,get_object_or_404
 from django.template import RequestContext
 from app.forms import CreateCourseForm, UploadFileForm, UploadSourceLinkForm
@@ -182,7 +181,7 @@ def viewFaculties(request):
     context = {'faculties' : faculties}
     return render_to_response('faculties.html',context)
 
-def viewFaculty(request,faculty_id):
+def viewFaculty(request, faculty_id):
     faculty = get_object_or_404(Faculty,id=faculty_id)
     courses = Course.objects.filter(faculty__id=faculty_id).order_by('university__name')
     context = {
@@ -190,3 +189,10 @@ def viewFaculty(request,faculty_id):
         'faculty' : faculty
     }
     return render_to_response('faculty.html',context)
+
+def download_resource(request, resource_id):
+    resource = get_object_or_404(Resource, id=resource_id)
+    data = FileWrapper(resource.docfile)
+    response = HttpResponse(data, mimetype='application/force-download')
+    response['Content-Disposition'] = 'attachment; filename=%s' % resource.docfile
+    return response

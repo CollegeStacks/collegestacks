@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
+from collegestacks import settings
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -25,5 +26,12 @@ urlpatterns = patterns('',
 
     url(r'^course/(?P<course_id>\d+)/uploadFile$','app.views.uploadFile'),
     url(r'^course/(?P<course_id>\d+)/upLink$','app.views.upLink'),
+    url(r'^course/resource/download/(?P<resource_id>\d+)$', 'app.views.download_resource'),
 
+)
+
+
+urlpatterns += patterns('',
+    (r'^course/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': settings.MEDIA_ROOT})
 )

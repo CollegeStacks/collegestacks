@@ -1,6 +1,6 @@
 import unittest
 from django.test import Client
-from app.models import Course,University, Faculty
+from app.models import Course,University, Faculty, Resource
 import os.path
 
 class TestFoundersSuite(unittest.TestCase):
@@ -208,4 +208,24 @@ class TestCourseSuite(unittest.TestCase):
         self.assertIn('Please fill all information', response.content)
         self.assertIn('course/1',response.__str__())
 
+    def test_download_file(self):
+        PROJECT_DIR = os.path.dirname(__file__)
 
+        uploadFile = open(PROJECT_DIR + os.sep + 'test_files' + os.sep + 'testUpload.txt')
+        context = (
+            {
+                'name': 'test_upload_file',
+                'description': 'test upload file',
+                'docfile': uploadFile,
+            }
+        )
+        response = self.client.post('/course/1/uploadFile', context, follow=True)
+        uploadFile.close()
+
+        url = '/course/1'
+        response = self.client.get(url)
+        rid = Resource.objects.get(name='test_upload_file').id
+        url_file_to_test = '/course/resource/download/%d' % rid
+        self.assertIn('<a href="%s">download</a>' % url_file_to_test, response.content)
+        response = self.client.get(url_file_to_test)
+        self.assertEqual(response.status_code, 200)

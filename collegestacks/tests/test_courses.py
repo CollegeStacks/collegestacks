@@ -220,6 +220,3 @@ class TestCourseSuite(TestCase):
         self.assertIn(course1.title, response.content)
         self.assertIn(course2.title, response.content)
         self.assertIn(course3.title, response.content)
-
-
-
