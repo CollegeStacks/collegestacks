@@ -5,6 +5,9 @@ from django.template import RequestContext
 from app.forms import CreateCourseForm, UploadFileForm, UploadSourceLinkForm
 from app.models import Course,University, Faculty, Resource
 
+def main(request):
+    return render_to_response('main.html')
+
 def createCourse(request):
     context = RequestContext(request,
             {
@@ -196,3 +199,8 @@ def download_resource(request, resource_id):
     response = HttpResponse(data, mimetype='application/force-download')
     response['Content-Disposition'] = 'attachment; filename=%s' % resource.docfile
     return response
+
+def search(request):
+    if request.method == 'GET' :
+        q = request.GET.get('q','')
+        return HttpResponse(content="Searching for " + str(q))
