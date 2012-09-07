@@ -4,12 +4,23 @@ from django.db import models
 
 class University(models.Model):
     name = models.CharField(max_length=140)
+    abbr = models.CharField(max_length=15)
 
     def __unicode__(self):
         return self.name
 
 class Faculty(models.Model):
     name = models.CharField(max_length= 140)
+    abbr = models.CharField(max_length=15)
+    university = models.ForeignKey(University)
+
+    def __unicode__(self):
+        return self.name
+
+class Department(models.Model):
+    name = models.CharField(max_length=140)
+    abbr = models.CharField(max_length=15)
+    faculty = models.ForeignKey(Faculty)
 
     def __unicode__(self):
         return self.name
@@ -20,6 +31,7 @@ class Course(models.Model):
     abbr = models.CharField(max_length=50)
     university = models.ForeignKey(University)
     faculty = models.ForeignKey(Faculty)
+    department = models.ForeignKey(Department)
     description = models.TextField(max_length=1000)
 
     def __unicode__(self):

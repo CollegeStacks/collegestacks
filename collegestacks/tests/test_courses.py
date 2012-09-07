@@ -1,5 +1,5 @@
 from django.test import TestCase
-from app.models import Course,University, Faculty
+from app.models import *
 
 class TestCourseSuite(TestCase):
 
@@ -16,11 +16,11 @@ class TestCourseSuite(TestCase):
         #self.fail("Not Implement Yet")
 
     def test_course_model(self):
-        uni1 = University.objects.get_or_create(name="Chulalongkorn")[0]
-        faculty1 = Faculty.objects.get_or_create(name="Engineering")[0]
-        course1 = Course.objects.get_or_create(title="Formal Language", abbr="Formal Lang", code="2110399",
-            description="abc",university=uni1,faculty=faculty1)[0]
-        course1.save()
+        uni = University.objects.create(name="Chulalongkorn",abbr="chula")
+        faculty = Faculty.objects.create(name="Engineering",abbr='eng',university=uni)
+        dep = Department.objects.create(name="Computer Engineering",abbr='cp',faculty=faculty)
+        course1 = Course.objects.create(title="Formal Language", abbr="Formal Lang", code="2110399",
+            description="abc",university=uni,faculty=faculty,department=dep)
         c = Course.objects.get(pk=course1.id)
         self.assertEquals(c.title,'Formal Language')
         self.assertEqual(c.abbr, 'Formal Lang')
@@ -30,15 +30,18 @@ class TestCourseSuite(TestCase):
         self.assertEqual(c.faculty.name,'Engineering')
 
     def test_create_course_success(self):
-        university = University.objects.create(name="MIT")
-        faculty = Faculty.objects.create(name="Science")
+        university = University.objects.create(name="MIT",abbr='mit')
+        faculty = Faculty.objects.create(name="Science",abbr='sci',university=university)
+        department = Department.objects.create(name="Physics",abbr='phy',faculty=faculty)
+
         context = {
             'title' : 'noly',
             'code' : '2110455',
             'abbr' : 'form',
             'university' : university.id,
             'faculty' : faculty.id,
-            'description' : 'test'
+            'department' : department.id,
+            'description' : 'test',
         }
         url = '/course/new'
         response = self.client.post(url,context)
@@ -55,7 +58,8 @@ class TestCourseSuite(TestCase):
             'abbr' : 'form',
             'university' : '',
             'faculty' : '',
-            'description' : ''
+            'department' : '',
+            'description' : '',
         }
         url = '/course/new'
         response = self.client.post(url,context)
@@ -68,9 +72,10 @@ class TestCourseSuite(TestCase):
         #test case for CS-04 View Course story card --noly
 
         #add new course to db
-        university = University.objects.create(name="Chulalongkorn")
-        facuty = Faculty.objects.create(name="Engineering")
-        course = Course.objects.create(title="Software Engineering", code="2110333", abbr="SE",university=university, faculty=facuty)
+        university = University.objects.create(name="Chulalongkorn",abbr="chula")
+        faculty = Faculty.objects.create(name="Engineering",abbr="eng",university=university)
+        department = Department.objects.create(name="Computer Engineering",abbr="cp",faculty=faculty)
+        course = Course.objects.create(title="Software Engineering", code="2110333", abbr="SE",university=university, faculty=faculty, department=department)
 
         #retrieve course from http call to test
         url = '/course/%(id)d'%{"id":course.id}
@@ -84,6 +89,7 @@ class TestCourseSuite(TestCase):
         self.assertIn(course.abbr, content)
         self.assertIn(course.university.name, content)
         self.assertIn(course.faculty.name, content)
+        self.assertIn(course.department.name, content)
 
     def test_course_id_notfound(self):
         id = len(Course.objects.all())+5
@@ -94,9 +100,10 @@ class TestCourseSuite(TestCase):
 
     def test_edit_course(self):
         # Build
-        university = University.objects.create(name="Chulalongkorn")
-        faculty = Faculty.objects.create(name="Engineering")
-        course = Course.objects.create(title="Software Analysis", code="2110333", abbr="SE",university=university, faculty=faculty, description="desc")
+        university = University.objects.create(name="Chulalongkorn",abbr='chula')
+        faculty = Faculty.objects.create(name="Engineering",abbr='eng',university=university)
+        department = Department.objects.create(name="Computer Engineering", abbr='cp',faculty=faculty)
+        course = Course.objects.create(title="Software Analysis", code="2110333", abbr="SE",university=university, faculty=faculty,department=department, description="desc")
 
         # Operate
         url = '/course/%d/edit' % course.id
@@ -111,15 +118,18 @@ class TestCourseSuite(TestCase):
         self.assertIn(course.description, response.content)
         self.assertIn('selected="selected">%s' % course.university.name, response.content)
         self.assertIn('selected="selected">%s' % course.faculty.name, response.content)
+        self.assertIn('selected="selected">%s' % course.department.name, response.content)
 
-        new_university = University.objects.create(name="Stanford")
-        new_faculty = Faculty.objects.create(name="Laws")
+        new_university = University.objects.create(name="Stanford",abbr='stanford')
+        new_faculty = Faculty.objects.create(name="Law",abbr='law',university=new_university)
+        new_department = Department.objects.create(name="International",abbr='int',faculty=new_faculty)
         context = {
             'title' : course.title,
             'code' : course.code,
             'abbr' : course.abbr,
             'university' : new_university.id,
             'faculty' : new_faculty.id,
+            'department' : new_department.id,
             'description' : course.description
         }
 
@@ -127,7 +137,7 @@ class TestCourseSuite(TestCase):
         response = self.client.post(url,context,follow=True)
         print(url)
         print(response)
-
+        print("FUCKYOUTHUNDER#######################")
         # Check
         self.assertEqual(response.status_code, 200)
         self.assertIn("<title>View Course</title>",response.content)
@@ -139,6 +149,8 @@ class TestCourseSuite(TestCase):
         self.assertNotIn(university.name, response.content)
         self.assertIn(new_faculty.name, response.content)
         self.assertNotIn(faculty.name,response.content)
+        self.assertIn(new_department.name, response.content)
+        self.assertNotIn(department.name,response.content)
 
 
     def test_list_universities(self):
@@ -168,10 +180,11 @@ class TestCourseSuite(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code,200)
         self.assertIn('NO FACULTY FOUND',response.content)
+        u = University.objects.create(name="Chulalongkorn", abbr='chula')
 
-        f1 = Faculty.objects.create(name="Engineering")
-        f2 = Faculty.objects.create(name="Law")
-        f3 = Faculty.objects.create(name="Arts")
+        f1 = Faculty.objects.create(name="Engineering",abbr='eng',university=u)
+        f2 = Faculty.objects.create(name="Law",abbr='law',university=u)
+        f3 = Faculty.objects.create(name="Arts",abbr='arts',university=u)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code,200)
@@ -184,34 +197,38 @@ class TestCourseSuite(TestCase):
         self.assertIn('/faculty/' + str(f3.id) ,response.content)
 
     def test_view_faculty(self):
-        faculty = Faculty.objects.create(name = 'Engineering')
-        university1 = University.objects.create(name = 'Chula')
-        university2 = University.objects.create(name = 'MIT')
-        course1 = Course.objects.create(title='Formal Language', abbr='FORM LANG', code='2110211', description="yay",
-                                                                        faculty=faculty, university=university1)
-        course2 = Course.objects.create(title='Calculus', abbr='CAL', code='EE999', description="fuck",
-            faculty=faculty, university=university2)
+
+        university1 = University.objects.create(name = 'Chula',abbr='chula')
+        university2 = University.objects.create(name = 'MIT',abbr='mit')
+        faculty1 = Faculty.objects.create(name = 'Engineering',abbr='eng',university=university1)
+        faculty2 = Faculty.objects.create(name = 'Engineering',abbr='eng',university=university2)
+        dep1 = Department.objects.create(name = 'Computer Engineering',abbr='cp',faculty=faculty1)
+        dep2 = Department.objects.create(name = 'Computer Engineering',abbr='cp',faculty=faculty2)
+
+        course1 = Course.objects.create(title='Formal Language', abbr='FORM LANG', code='2110211', description="yay",faculty=faculty1, university=university1,department=dep1)
+        course2 = Course.objects.create(title='Calculus', abbr='CAL', code='EE999', description="fuck",faculty=faculty2, university=university2,department=dep2)
         course3 = Course.objects.create(title='Programming', abbr='PROG', code='2110101', description="yay",
-            faculty=faculty, university=university1)
-        url = '/faculty/1'
+            faculty=faculty1, university=university1,department=dep1)
+
+        url = '/faculty/%d'%faculty1.id
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(course1.title, response.content)
-        self.assertIn(course2.title, response.content)
+        self.assertNotIn(course2.title, response.content)
         self.assertIn(course3.title, response.content)
 
     def test_view_university(self):
-        university = University.objects.create(name='Chulalongkorn')
-        faculty1 = Faculty.objects.create(name='Engineering')
-        faculty2 = Faculty.objects.create(name='Law')
-
+        university = University.objects.create(name='Chulalongkorn',abbr='chula')
+        faculty1 = Faculty.objects.create(name='Engineering',abbr='eng',university=university)
+        faculty2 = Faculty.objects.create(name='Law',abbr='law',university=university)
+        department1 = Department.objects.create(name='Computer Engineering',abbr='cp',faculty=faculty1)
+        department2 = Department.objects.create(name='International',abbr='int',faculty=faculty2)
         course1 = Course.objects.create(title='Formal Language', abbr='FORM LANG', code='2110211', description="yay",
-            faculty=faculty1, university=university)
-        course2 = Course.objects.create(title='Calculus', abbr='CAL', code='EE999', description="fuck",
-            faculty=faculty2, university=university)
+            faculty=faculty1, university=university, department=department1)
+        course2 = Course.objects.create(title='Calculus', abbr='CAL', code='EE999', description="fuck",faculty=faculty2, university=university,department=department2)
         course3 = Course.objects.create(title='Programming', abbr='PROG', code='2110101', description="yay",
-            faculty=faculty1, university=university)
+            faculty=faculty1, university=university,department=department1)
 
         url = '/university/1'
         response = self.client.get(url)

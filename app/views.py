@@ -1,9 +1,9 @@
 from wsgiref.util import FileWrapper
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotAllowed
 from django.shortcuts import render_to_response,get_object_or_404
 from django.template import RequestContext
 from app.forms import CreateCourseForm, UploadFileForm, UploadSourceLinkForm
-from app.models import Course,University, Faculty, Resource
+from app.models import *
 
 def main(request):
     return render_to_response('main.html')
@@ -20,7 +20,7 @@ def createCourse(request):
         if creCourseForm.is_valid():
             data = creCourseForm.cleaned_data
             course = Course.objects.get_or_create(title = data['title'], code = data['code'], abbr = data['abbr'],
-            university = data['university'], faculty = data['faculty'], description = data['description'])[0]
+            university = data['university'], faculty = data['faculty'],department = data['department'], description = data['description'])[0]
             course.save()
             return HttpResponseRedirect('/course/%d'%course.id)
         else:
@@ -29,7 +29,7 @@ def createCourse(request):
                         'form' : CreateCourseForm(
                             initial = {'title':data['title'], 'code':data['code'], 'abbr':data['abbr'],
                                        'university':data['university'], 'faculty':data['faculty'],
-                                       'description':data['description']}
+                                       'department':data['department'], 'description':data['description']}
                         ),
                         'error' : 'please fill all information'
                     }
@@ -67,7 +67,7 @@ def editCourse(request,course_id):
                 'form' : CreateCourseForm(
                     initial= {'title':c.title, 'code':c.code, 'abbr':c.abbr,
                               'university':c.university, 'faculty':c.faculty,
-                              'description':c.description}
+                              'department':c.department, 'description':c.description}
                 ),
                 'cid':c.id
             }
@@ -86,6 +86,8 @@ def editCourse(request,course_id):
             c.description=data['description']
             c.university=data['university']
             c.faculty=data['faculty']
+            c.department=data['department']
+            c.description=data['description']
             c.save()
             print("EDIT COMPLETE!! REDIRECTING TO %d"%c.id)
             return HttpResponseRedirect('/course/%d'%c.id)
@@ -96,7 +98,7 @@ def editCourse(request,course_id):
                     'form' : CreateCourseForm(
                         initial = {'title':data['title'], 'code':data['code'], 'abbr':data['abbr'],
                                    'university':data['university'], 'faculty':data['faculty'],
-                                   'description':data['description']}
+                                   'department':data['department'], 'description':data['description']}
                     ),
                     'error' : 'please fill all information',
                     'cid':c.id,
@@ -203,4 +205,7 @@ def download_resource(request, resource_id):
 def search(request):
     if request.method == 'GET' :
         q = request.GET.get('q','')
+        if q == '':
+            return HttpResponse(content="nothing to search")
         return HttpResponse(content="Searching for " + str(q))
+    return HttpResponseNotAllowed()

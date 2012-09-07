@@ -1,6 +1,6 @@
 __author__ = 'User'
 from django import forms
-from app.models import Course, University, Faculty
+from app.models import *
 
 class CreateCourseForm(forms.Form):
     title = forms.CharField(max_length=100)
@@ -8,6 +8,7 @@ class CreateCourseForm(forms.Form):
     abbr = forms.CharField(max_length=50)
     university = forms.ModelChoiceField(University.objects.all())
     faculty = forms.ModelChoiceField(Faculty.objects.all())
+    department = forms.ModelChoiceField(Department.objects.all())
     description = forms.CharField(widget=forms.Textarea)
 
 class UploadSourceLinkForm(forms.Form):
